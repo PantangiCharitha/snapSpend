@@ -29,24 +29,32 @@ const Auth = () => {
       if (mode === 'login') {
         // Login flow
         const { error } = await signIn(email, password);
-        if (error) throw error;
+        if (error) {
+          console.error('Sign in error:', error);
+          throw error;
+        }
         toast.success('Logged in successfully!');
         navigate('/');
       } else {
         // Sign up flow
         if (password !== confirmPassword) {
           toast.error('Passwords do not match');
+          setLoading(false);
           return;
         }
         
         const { error } = await signUp(email, password, fullName);
-        if (error) throw error;
+        if (error) {
+          console.error('Sign up error:', error);
+          throw error;
+        }
         
         toast.success('Account created! Please check your email for verification.');
         navigate('/auth?mode=login');
       }
     } catch (error: any) {
-      toast.error(error.message || 'Authentication failed');
+      console.error('Auth error:', error);
+      toast.error(error.message || error.error_description || 'Authentication failed');
     } finally {
       setLoading(false);
     }
